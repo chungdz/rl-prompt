@@ -363,6 +363,13 @@ def soft_q_loss_with_sparse_rewards_2_2_reversed_3_3_reversed(
         coefficient: Optional[float] = None,
 ) -> Tuple[torch.Tensor, Dict[str, Any]]:
 
+    print("logits.size()", logits.size(), logits)
+    print("logits_.size()", logits_.size(), logits_)
+    print("actions.size()", actions.size(), actions)
+    print("rewards.size()", rewards.size(), rewards)
+    print("sequence_length.size()", sequence_length.size(), sequence_length)
+    print("coefficient", coefficient)
+
     raw_losses_2, quantities_to_log_2 = soft_q_loss_with_sparse_rewards_2_2_reversed(
         logits=logits,
         logits_=logits_,

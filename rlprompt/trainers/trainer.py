@@ -53,7 +53,7 @@ class Trainer:
         assert do_eval == False or eval_dataset is not None, \
             "Need to have eval_dataset if do_eval is True"
         self.module = module
-
+        
         self.train_dataset = train_dataset
         self.train_batch_size = train_batch_size
         self.train_shuffle = train_shuffle
@@ -102,6 +102,7 @@ class Trainer:
         step: int,
         batch: Dict[str, Any]
     ) -> Dict[str, Any]:
+        
         model = self.module.train()
         model._pre_steps(step)
 
@@ -146,7 +147,9 @@ class Trainer:
             total_train_epochs = \
                 (self.max_train_steps // num_batches_per_epoch
                  + int(self.max_train_steps % num_batches_per_epoch > 0))
-
+        
+        print('total_train_epochs ', total_train_epochs, 'num_batches_per_epoch ', len(train_dataloader))
+        
         # Determine whether to evaluate by epoch or steps
         eval_by_steps = self.eval_steps > 0
         # Determine whether to save by epoch or steps
@@ -154,8 +157,10 @@ class Trainer:
 
         total_steps = 0
         for epoch in range(total_train_epochs):
+            
             for step, batch in enumerate(train_dataloader):
                 batch_log = self._train_step(step, batch)
+                return
                 if report_to_wandb:
                     wandb.log(batch_log)
                 total_steps += 1

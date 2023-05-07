@@ -39,6 +39,16 @@ class SinglePromptModel(BaseModel):
             batch_size = self.prompt_train_batch_size
         prompt_source = self._get_prompt_source(batch_size=batch_size)
 
+        print('input length', len(source_texts))
+        print('source_texts', source_texts)
+        print('do_sample', do_sample)
+        print('top_k', top_k)
+        print('top_p', top_p)
+        print('num_beams', num_beams)
+        print('max_new_tokens', max_new_tokens)
+        print('infer', infer)
+        print('prompt_source', prompt_source)
+
         if max_new_tokens is None: 
             max_new_tokens = self.prompt_length
         return self._model.generate(source_texts=prompt_source,

@@ -43,6 +43,7 @@ class LMAdaptorModel(BaseModel):
 
         assert policy_lm in SUPPORTED_LMS  # TODO: Support more LMs
         model = policy_lm
+        print(model)
         self.device = 0  # TODO
         self.tokenizer = AutoTokenizer.from_pretrained(
             model,
@@ -255,7 +256,8 @@ class LMAdaptorModel(BaseModel):
         is_greedy_gen_mode = (do_sample == False) and (num_beams == 1)
         is_sample_gen_mode = (do_sample == True) and (num_beams == 1)
         assert is_greedy_gen_mode or is_sample_gen_mode
-
+        print('is_greedy_gen_mode', is_greedy_gen_mode)
+        print('is_sample_gen_mode', is_sample_gen_mode)
         if is_greedy_gen_mode:
             return self.greedy_search(source_texts=source_texts,
                                       max_new_tokens=max_new_tokens,
