@@ -3,7 +3,7 @@ from torch import nn
 import numpy as np
 from typing import Optional, List, Dict, Union
 
-from transformers import pipeline, AutoTokenizer
+from transformers import pipeline, AutoTokenizer, T5ForConditionalGeneration
 
 from .base_model import BaseModel
 from .model_utils import _top_k_logits, _top_p_logits
@@ -151,12 +151,15 @@ class LMAdaptorModel(BaseModel):
                       for a in actions.tolist()]
             token_strs = [self.generator.tokenizer.convert_tokens_to_string([t])
                           for t in tokens]
-
+            print('token_strs', token_strs)
+            print('token', tokens)
             for s, t in zip(sample_tokens, tokens): 
                 s.append(t)
-            sample_ids.append(actions.unsqueeze(dim=1))  # [batch_size, 1]
-            sample_logits.append(logits.unsqueeze(dim=1))
+            # [batch_size, 1]
+            sample_ids.append(actions.unsqueeze(dim=1))  
             # [batch_size, 1, vocab_size]
+            sample_logits.append(logits.unsqueeze(dim=1))
+            
 
             state, past_key_values = self._get_generation_cache(token_strs,
                                                                 past_key_values)
