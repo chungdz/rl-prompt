@@ -134,9 +134,10 @@ class LMAdaptorModel(BaseModel):
             logits = self._mlp_forward(state)  # [batch_size, vocab_size]
             logits = logits + self.logit_bias
             # print(logits[:, 4:].min().item(), logits.max().item())
-
+            print('logits', logits.size(), logits[0])
             if top_k is not None:
                 sampling_logits = _top_k_logits(logits, k=top_k)
+                print('sampling_logits', sampling_logits.size(), sampling_logits[0])
             elif top_p is not None:
                 sampling_logits = _top_p_logits(logits, p=top_p)
             else:
@@ -145,6 +146,7 @@ class LMAdaptorModel(BaseModel):
             actions = (torch.distributions.categorical
                        .Categorical(logits=sampling_logits)
                        .sample())  # [batch_size]
+            print('actions', actions.size(), actions[0])
             tokens = [self.generator.tokenizer.convert_ids_to_tokens([a])[0]
                       for a in actions.tolist()]
             token_strs = [self.generator.tokenizer.convert_tokens_to_string([t])
@@ -171,6 +173,7 @@ class LMAdaptorModel(BaseModel):
                       sample_logits=sample_logits,
                       sample_ids=sample_ids,
                       sample_lengths=sample_lengths)
+        print(output)
         return output
 
     def greedy_search(self,
@@ -225,15 +228,20 @@ class LMAdaptorModel(BaseModel):
                                      truncation=True,
                                      return_tensors='pt')
                           .to(self.device))
+        print(source_texts)
         input_ids = token_encoding['input_ids']
         input_lengths = token_encoding['attention_mask'].sum(dim=1)
         outputs = self.generator.model.transformer(input_ids,
                                                    past_key_values=past_key_values,
                                                    use_cache=True)
+        print("input_ids.shape", input_ids.shape, 'input_lengths.shape', input_lengths.shape)
+        print("outputs.last_hidden_state.shape", outputs.last_hidden_state.shape)
         last_token_hidden_state = \
             outputs.last_hidden_state[np.arange(input_ids.shape[0]),
                                       (input_lengths - 1)]
+        print("last_token_hidden_state", last_token_hidden_state)
         past_key_values = outputs.past_key_values
+        # print('past_key_values', past_key_values)
         return last_token_hidden_state, past_key_values
 
     def generate(
