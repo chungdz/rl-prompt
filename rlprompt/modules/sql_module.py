@@ -127,6 +127,9 @@ class SQLModule(BaseModule):
                                   mode="train")
         shaped_rewards = self._reward_shaping_func(raw_rewards)
 
+        print("raw_rewards", raw_rewards.size(), raw_rewards)
+        print("shaped_rewards", shaped_rewards.size(), shaped_rewards)
+
         sql_loss, sql_loss_log = sql_loss_with_sparse_rewards(
             implementation=self._sql_loss_impl,
             logits=logits,
@@ -190,6 +193,7 @@ class SQLModule(BaseModule):
                                        num_beams=self._num_beams)
 
         batch_ = {k: v for k, v in batch.items()}
+        print("batch", batch)
         batch_.update(outputs)
 
         outputs_ = self._target_model.teacher_forcing(**batch_)

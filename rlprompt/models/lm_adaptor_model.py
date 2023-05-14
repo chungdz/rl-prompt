@@ -176,7 +176,7 @@ class LMAdaptorModel(BaseModel):
                       sample_logits=sample_logits,
                       sample_ids=sample_ids,
                       sample_lengths=sample_lengths)
-        print(output)
+        print("sample outputs", output)
         return output
 
     def greedy_search(self,
